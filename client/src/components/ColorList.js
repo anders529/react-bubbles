@@ -28,12 +28,11 @@ const ColorList = ({colors, updateColors}) => {
         axiosWithAuth().delete(`/colors/${color.id}`)
             .then(() => {
                   axiosWithAuth()
-                    .get('http://localhost:5000/api/colors')
+                    .get('/colors')
                     .then(res => updateColors(res.data))
                     .catch(err => console.log(err));
                     setEditing(false);
-            })
-    };
+            })};
     return (
         <div className="colors-wrap">
             <p>colors</p>
