@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import axios from "axios";
+import { axiosWithAuth } from '../utils/axiosWithAuth.js';
 const initialColor = {
     color: "",
     code: {hex: ""}
@@ -14,19 +14,24 @@ const ColorList = ({colors, updateColors}) => {
     };
     const saveEdit = e => {
         e.preventDefault();
-        axios.put(`http://localhost:5000/api/colors/${colors.id}`, updateColors)
-            .then(response => {
-                setEditing(response.boolean);
+        console.log("save New Color", colorToEdit);
+        axiosWithAuth()
+            .put(`/colors/${colorToEdit.id}`, colorToEdit)
+            .then(() => {
+                axiosWithAuth()
+                    .get("/colors")
+                    .then(res => {updateColors(res.data)})
+                    .catch(err => {console.log(err)});
             })
-            .catch(error => {
-                console.log(error)
-            })
-    };
+            .catch(err => {console.log(err)})};
     const deleteColor = color => {
-        axios.delete(`http://localhost:5000/api/colors/${color.id}`)
-            .then(response => {
-                console.log(response);
-                this.props.history.push('/protected')
+        axiosWithAuth().delete(`/colors/${color.id}`)
+            .then(() => {
+                  axiosWithAuth()
+                    .get('http://localhost:5000/api/colors')
+                    .then(res => updateColors(res.data))
+                    .catch(err => console.log(err));
+                    setEditing(false);
             })
     };
     return (
